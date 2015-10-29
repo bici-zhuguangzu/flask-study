@@ -7,8 +7,10 @@
 # @Version : $Id$
 
 from __init__ import *
+from auth import forms
 
 app = flask.Flask(__name__)
+app.config['SECRET_KEY'] = '123456'
 
 manager = flask.ext.script.Manager(app)
 bootstrap = flask.ext.bootstrap.Bootstrap(app)
@@ -20,6 +22,18 @@ port = config.port
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+@app.route('/reg/', methods=['GET', 'POST'])
+def reg():
+    form = forms.LoginForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        form.name.data = ''
+        passwd = form.passwd.data
+        form.name.data = ''
+    return render_template('forms.html', form=form, name=name, passwd=passwd)
+    # return render_template('forms.html', form=form)
 
 
 @app.route('/user/<name>')
@@ -38,4 +52,4 @@ def intrate_server_error(e):
 
 
 if __name__ == '__main__':
-    app.run(host=host, port=port)
+    app.run(host=host, port=port, debug=True)
