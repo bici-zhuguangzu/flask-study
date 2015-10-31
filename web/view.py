@@ -8,6 +8,7 @@
 
 from __init__ import *
 from auth import forms
+from flask.ext.login import login_required
 
 app = flask.Flask(__name__)
 app.config['SECRET_KEY'] = '123456'
@@ -19,12 +20,7 @@ host = config.ipaddr
 port = config.port
 
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-
-@app.route('/reg/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def reg():
     form = forms.LoginForm()
     if form.validate_on_submit():
@@ -32,11 +28,13 @@ def reg():
         form.name.data = ''
         passwd = form.passwd.data
         form.name.data = ''
-    return render_template('forms.html', form=form, name=name, passwd=passwd)
-    # return render_template('forms.html', form=form)
+        print name, passwd
+    # return render_template('forms.html', form=form, name=name, passwd=passwd)
+    return render_template('forms.html', form=form)
 
 
 @app.route('/user/<name>')
+@login_required
 def users(name):
     return render_template('users.html', name=name)
 
